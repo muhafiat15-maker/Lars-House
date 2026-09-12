@@ -34,28 +34,28 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
       };
 
       // Call our backend
-      const response = await fetch('http://localhost:5000/api/checkout', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
       });
 
       const data = await response.json();
-      
+
       if (data.snapToken) {
         // Trigger Midtrans popup
         window.snap.pay(data.snapToken, {
-          onSuccess: function(result) {
+          onSuccess: function (result) {
             alert("Payment Success! We will contact you via WhatsApp.");
             // Clear cart logic here (would pass clearCart from App.jsx)
           },
-          onPending: function(result) {
+          onPending: function (result) {
             alert("Waiting for your payment!");
           },
-          onError: function(result) {
+          onError: function (result) {
             alert("Payment failed!");
           },
-          onClose: function() {
+          onClose: function () {
             alert("You closed the popup without finishing the payment.");
           }
         });
@@ -73,7 +73,7 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
   if (cart.length === 0) {
     return (
       <div className="min-h-screen pt-32 px-4 flex flex-col items-center bg-lars-sand bg-pattern-topography">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           className="bg-white p-12 rounded-3xl shadow-xl border border-gray-100 text-center max-w-md w-full mt-12"
         >
@@ -94,21 +94,21 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
   return (
     <div className="min-h-screen bg-lars-sand bg-pattern-waves pt-32 pb-24">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-5 gap-12 relative z-10">
-        
+
         {/* Cart Items */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-3">
           <Link to="/" className="text-lars-teal hover:text-lars-gold flex items-center space-x-2 mb-8 inline-flex bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 transition-all hover:shadow-md">
             <ArrowLeft size={16} />
             <span className="font-medium text-sm">Kembali Belanja</span>
           </Link>
-          
+
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-serif text-lars-navy">Ringkasan Pesanan</h2>
             <span className="bg-lars-gold/20 text-lars-navy px-3 py-1 rounded-full text-sm font-semibold border border-lars-gold/30">
               {cart.reduce((sum, item) => sum + item.quantity, 0)} Items
             </span>
           </div>
-          
+
           <div className="space-y-4">
             {cart.map(item => (
               <div key={item.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4 hover:shadow-md transition-shadow group">
@@ -136,7 +136,7 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
         {/* Checkout Form */}
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-2">
           <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 h-fit sticky top-32">
-            
+
             <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
               <h2 className="text-2xl font-serif text-lars-navy flex items-center gap-2">
                 <ShieldCheck className="text-lars-gold" size={24} />
@@ -172,9 +172,9 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Alamat Lengkap</label>
                 <textarea name="address" required value={formData.address} onChange={handleChange} rows="3" className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-lars-gold/50 focus:border-lars-gold outline-none transition-all shadow-sm resize-none" placeholder="Jalan, RT/RW, Kecamatan, Kota..."></textarea>
               </div>
-              
-              <button 
-                type="submit" 
+
+              <button
+                type="submit"
                 disabled={loading}
                 className="w-full bg-lars-navy text-white py-4 rounded-xl font-medium tracking-wide hover:bg-lars-gold transition-all duration-300 disabled:opacity-50 mt-6 shadow-lg shadow-lars-navy/20 flex items-center justify-center space-x-2 group"
               >
@@ -187,7 +187,7 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
                   </>
                 )}
               </button>
-              
+
               <div className="flex items-center justify-center space-x-2 text-gray-400 mt-4 text-sm">
                 <Lock size={14} />
                 <span>Pembayaran aman & terenkripsi</span>
@@ -195,7 +195,7 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
             </form>
           </div>
         </motion.div>
-        
+
       </div>
     </div>
   );
