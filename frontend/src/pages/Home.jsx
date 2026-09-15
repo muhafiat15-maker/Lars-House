@@ -2,6 +2,8 @@ import { useState } from 'react';
 import HeroSection from '../components/HeroSection';
 import ProductCard from '../components/ProductCard';
 import FaqSection from '../components/FaqSection';
+import CounterSection from '../components/CounterSection';
+import TestimonialCarousel from '../components/TestimonialCarousel';
 import { products } from '../data/products';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Star, Quote, ShieldCheck, Leaf, HeartPulse, Users, ChevronDown, Sparkles } from 'lucide-react';
@@ -71,6 +73,8 @@ export default function Home({ addToCart }) {
     <div className="min-h-screen">
       <HeroSection />
       
+      <CounterSection />
+      
       {/* About Section */}
       <section id="about" className="pt-20 pb-32 bg-white relative overflow-hidden">
         <FloatingElement delay={0} duration={6} yOffset={-30} className="top-20 left-10 text-lars-gold opacity-10">
@@ -84,10 +88,10 @@ export default function Home({ addToCart }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Imagery / Editorial Side */}
             <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
               className="relative"
             >
               <div className="aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl relative">
@@ -101,10 +105,10 @@ export default function Home({ addToCart }) {
 
             {/* Text Side */}
             <motion.div 
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
               className="space-y-12"
             >
               <div>
@@ -154,8 +158,8 @@ export default function Home({ addToCart }) {
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: idx * 0.1 }}
                 className="bg-gray-800/50 border border-gray-700 p-8 rounded-2xl text-center backdrop-blur-sm hover:bg-gray-800 transition-colors"
               >
                 <div className="inline-block p-4 bg-lars-gold/10 rounded-full text-lars-gold mb-6">
@@ -196,45 +200,9 @@ export default function Home({ addToCart }) {
             <h2 className="text-fluid-h2 font-serif text-lars-navy mb-4">Pengalaman Premium</h2>
             <div className="w-16 h-1 bg-lars-gold mx-auto"></div>
           </div>
-          <div className="overflow-hidden relative -mx-4 px-4 py-4">
-            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none hidden md:block"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white to-transparent z-20 pointer-events-none hidden md:block"></div>
-            <div className="animate-marquee gap-8">
-              {[...Array(2)].map((_, arrayIdx) => (
-                [
-                  {
-                    name: "Diana Puspita",
-                    product: "Rumput Laut Panggang Pedas",
-                    review: "Kualitasnya jauh di atas rata-rata snack rumput laut yang ada di pasaran. Rasa pedasnya pas dan teksturnya sangat renyah. Sangat direkomendasikan!"
-                  },
-                  {
-                    name: "Budi Santoso",
-                    product: "Rumput Laut Kering Alami",
-                    review: "Sangat segar saat direbus kembali. Saya menggunakannya untuk sup dan tumisan. Rasanya murni laut, tidak amis sama sekali. Kualitas ekspor."
-                  },
-                  {
-                    name: "Sarah Wijaya",
-                    product: "Rumput Laut Panggang Garam Laut Asli",
-                    review: "Snack favorit anak-anak! Sehat dan kemasannya premium. Sangat terlihat kalau proses pembuatannya dijaga dengan standar tinggi."
-                  }
-                ].map((item, idx) => (
-                  <div key={`${arrayIdx}-${idx}`} className="w-[350px] shrink-0">
-                    <div className="bg-lars-sand/30 p-8 rounded-3xl relative border border-gray-100 hover:shadow-xl transition-shadow group flex flex-col h-full">
-                      <Quote className="text-lars-gold/10 absolute top-8 right-8 w-16 h-16 group-hover:scale-110 transition-transform" />
-                      <div className="flex text-lars-gold mb-6">
-                        {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
-                      </div>
-                      <p className="text-gray-600 mb-8 leading-relaxed font-light relative z-10 italic">"{item.review}"</p>
-                      <div className="border-t border-gray-200 pt-4 mt-auto">
-                        <div className="font-semibold text-lars-navy">{item.name}</div>
-                        <div className="text-xs text-lars-teal mt-1 font-medium">Pembeli: {item.product}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ))}
-            </div>
-          </div>
+          
+          <TestimonialCarousel />
+          
         </div>
         <WaveBottom colorClass="text-lars-sand" />
       </section>
@@ -246,10 +214,10 @@ export default function Home({ addToCart }) {
       <section id="contact" className="pt-20 pb-32 bg-lars-navy text-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="lg:col-span-5 space-y-10"
           >
             <div>
@@ -290,10 +258,10 @@ export default function Home({ addToCart }) {
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
             className="lg:col-span-7"
           >
             <div className="h-[450px] rounded-3xl overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-lars-gold/20 p-2 bg-white/5 backdrop-blur-sm">

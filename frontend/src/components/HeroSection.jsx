@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export default function HeroSection() {
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Video with Overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-lars-navy pointer-events-none">
         <video 
@@ -67,6 +67,22 @@ export default function HeroSection() {
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             className="w-1 h-2 bg-lars-gold rounded-full"
           />
+        </div>
+      </motion.div>
+
+      {/* Floating Trust Badge */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
+        className="absolute bottom-20 md:bottom-24 right-4 md:right-10 z-20 bg-white/95 backdrop-blur-sm px-5 py-4 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] flex items-center space-x-4 border border-white/40"
+      >
+        <div className="bg-lars-gold/10 p-2.5 rounded-full text-lars-gold">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <div className="font-bold text-lars-navy text-xl leading-none mb-1">500+</div>
+          <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Pelanggan Puas</div>
         </div>
       </motion.div>
 

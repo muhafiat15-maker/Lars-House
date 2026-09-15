@@ -53,12 +53,12 @@ export default function ProductCard({ product, onAddToCart }) {
           <img 
             src={product.image} 
             alt={product.name} 
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-lars-navy/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-end pb-6">
+          <div className="absolute inset-0 bg-lars-navy/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center">
             <button 
               onClick={() => onAddToCart(product)}
-              className="bg-white text-lars-navy px-8 py-3.5 rounded-full font-semibold tracking-wide flex items-center space-x-2 transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out hover:bg-lars-gold hover:text-white shadow-[0_10px_40px_rgba(0,0,0,0.2)]"
+              className="bg-white text-lars-navy px-8 py-3.5 rounded-full font-semibold tracking-wide flex items-center space-x-2 transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out hover:bg-lars-gold hover:text-white shadow-[0_10px_40px_rgba(0,0,0,0.2)]"
             >
               <ShoppingCart size={18} />
               <span className="text-sm uppercase">Beli Sekarang</span>

@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 export default function Navbar({ cartCount }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
   const location = useLocation();
   const isHome = location.pathname === '/';
 
@@ -15,6 +16,35 @@ export default function Navbar({ cartCount }) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isHome) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, { rootMargin: '-40% 0px -60% 0px' });
+
+    const sections = document.querySelectorAll('section[id]');
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, [isHome]);
+
+  const getLinkClass = (sectionId) => {
+    const isActive = activeSection === sectionId;
+    return `relative group transition-colors ${isActive ? 'text-lars-gold' : 'hover:text-lars-gold'}`;
+  };
+
+  const getIndicatorClass = (sectionId) => {
+    const isActive = activeSection === sectionId;
+    return `absolute -bottom-1 left-0 h-0.5 bg-lars-gold transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`;
+  };
 
   const navBgClass = isHome 
     ? (isScrolled ? 'bg-lars-navy/95 backdrop-blur-md py-4 shadow-lg border-b border-white/5' : 'bg-transparent py-6')
@@ -28,19 +58,19 @@ export default function Navbar({ cartCount }) {
         </Link>
         
         <div className="hidden md:flex space-x-8 font-medium text-white/90">
-          <Link to="/" className="hover:text-lars-gold transition-colors relative group">
+          <a href={isHome ? "#home" : "/"} className={getLinkClass('home')}>
             Beranda
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-lars-gold transition-all duration-300 group-hover:w-full"></span>
-          </Link>
+            <span className={getIndicatorClass('home')}></span>
+          </a>
           {isHome && (
             <>
-              <a href="#products" className="hover:text-lars-gold transition-colors relative group">
+              <a href="#products" className={getLinkClass('products')}>
                 Produk
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-lars-gold transition-all duration-300 group-hover:w-full"></span>
+                <span className={getIndicatorClass('products')}></span>
               </a>
-              <a href="#about" className="hover:text-lars-gold transition-colors relative group">
+              <a href="#about" className={getLinkClass('about')}>
                 Tentang Kami
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-lars-gold transition-all duration-300 group-hover:w-full"></span>
+                <span className={getIndicatorClass('about')}></span>
               </a>
 
             </>
@@ -79,11 +109,11 @@ export default function Navbar({ cartCount }) {
             className="md:hidden absolute top-full left-0 w-full bg-lars-navy border-t border-white/10 shadow-xl flex flex-col overflow-hidden"
           >
             <div className="py-4 px-6 flex flex-col space-y-4 text-white">
-              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-lars-gold">Beranda</Link>
+              <a href={isHome ? "#home" : "/"} onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${activeSection === 'home' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>Beranda</a>
               {isHome && (
                 <>
-                  <a href="#products" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-lars-gold">Produk</a>
-                  <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-lars-gold">Tentang Kami</a>
+                  <a href="#products" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${activeSection === 'products' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>Produk</a>
+                  <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${activeSection === 'about' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>Tentang Kami</a>
 
                 </>
               )}
