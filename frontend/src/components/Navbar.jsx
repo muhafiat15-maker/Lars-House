@@ -42,14 +42,7 @@ export default function Navbar({ cartCount }) {
                 Tentang Kami
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-lars-gold transition-all duration-300 group-hover:w-full"></span>
               </a>
-              <a href="#testimonials" className="hover:text-lars-gold transition-colors relative group">
-                Ulasan
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-lars-gold transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <a href="#contact" className="hover:text-lars-gold transition-colors relative group">
-                Lokasi
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-lars-gold transition-all duration-300 group-hover:w-full"></span>
-              </a>
+
             </>
           )}
         </div>
@@ -91,8 +84,7 @@ export default function Navbar({ cartCount }) {
                 <>
                   <a href="#products" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-lars-gold">Produk</a>
                   <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-lars-gold">Tentang Kami</a>
-                  <a href="#testimonials" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-lars-gold">Ulasan</a>
-                  <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-lars-gold">Lokasi</a>
+
                 </>
               )}
             </div>
