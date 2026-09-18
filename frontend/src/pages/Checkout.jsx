@@ -1,11 +1,28 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Trash2, ShieldCheck, CreditCard, Lock, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Trash2, ShieldCheck, CreditCard, Lock, ShoppingBag, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Checkout({ cart, removeFromCart, updateQuantity }) {
-  const [formData, setFormData] = useState({ name: '', phone: '', address: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '' });
   const [loading, setLoading] = useState(false);
+  const [googleUser, setGoogleUser] = useState(null);
+
+  const handleGoogleSuccess = (credentialResponse) => {
+    try {
+      const decoded = jwtDecode(credentialResponse.credential);
+      setGoogleUser(decoded);
+      setFormData(prev => ({
+        ...prev,
+        name: prev.name || decoded.name,
+        email: prev.email || decoded.email
+      }));
+    } catch (error) {
+      console.error("Error decoding Google JWT", error);
+    }
+  };
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -22,6 +39,7 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
         gross_amount: total,
         customer_details: {
           first_name: formData.name,
+          email: formData.email,
           phone: formData.phone,
           shipping_address: { address: formData.address }
         },
@@ -160,9 +178,51 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
             </div>
 
             <form onSubmit={handleCheckout} className="space-y-5">
+              
+              {/* Google Login Section */}
+              <div className="mb-2">
+                {!googleUser ? (
+                  <div className="bg-lars-sand/30 p-5 rounded-xl border border-lars-gold/20 flex flex-col items-center">
+                    <p className="text-sm text-lars-navy mb-4 font-medium">Isi form lebih cepat dengan akun Google Anda</p>
+                    <GoogleLogin
+                      onSuccess={handleGoogleSuccess}
+                      onError={() => {
+                        console.log('Login Failed');
+                      }}
+                      useOneTap
+                    />
+                  </div>
+                ) : (
+                  <div className="bg-lars-teal/10 p-4 rounded-xl border border-lars-teal/30 flex justify-between items-center">
+                    <div className="flex items-center space-x-3">
+                      {googleUser.picture && (
+                        <img src={googleUser.picture} alt="Profile" className="w-8 h-8 rounded-full shadow-sm" />
+                      )}
+                      <span className="text-lars-navy text-sm font-medium">
+                        Masuk sebagai: {googleUser.name} <span className="text-lars-teal font-bold">✓</span>
+                      </span>
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setGoogleUser(null);
+                        setFormData(prev => ({...prev, name: '', email: ''}));
+                      }} 
+                      className="text-xs text-lars-teal hover:text-lars-navy flex items-center gap-1 font-medium bg-white px-2 py-1 rounded shadow-sm border border-lars-teal/20 transition-colors"
+                    >
+                      <LogOut size={12} /> Ganti akun
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
                 <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-lars-gold/50 focus:border-lars-gold outline-none transition-all shadow-sm" placeholder="Contoh: Budi Santoso" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-lars-gold/50 focus:border-lars-gold outline-none transition-all shadow-sm" placeholder="contoh@email.com" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Nomor WhatsApp</label>
