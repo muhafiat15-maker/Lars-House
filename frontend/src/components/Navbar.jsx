@@ -72,9 +72,12 @@ export default function Navbar({ cartCount }) {
                 Tentang Kami
                 <span className={getIndicatorClass('about')}></span>
               </a>
-
             </>
           )}
+          <Link to="/cek-pesanan" className={`relative group transition-colors ${location.pathname === '/cek-pesanan' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>
+            Cek Pesanan
+            <span className={`absolute -bottom-1 left-0 h-0.5 bg-lars-gold transition-all duration-300 ${location.pathname === '/cek-pesanan' ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+          </Link>
         </div>
 
         <div className="flex items-center space-x-6">
@@ -114,9 +117,9 @@ export default function Navbar({ cartCount }) {
                 <>
                   <a href="#products" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${activeSection === 'products' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>Produk</a>
                   <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${activeSection === 'about' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>Tentang Kami</a>
-
                 </>
               )}
+              <Link to="/cek-pesanan" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname === '/cek-pesanan' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>Cek Pesanan</Link>
             </div>
           </motion.div>
         )}

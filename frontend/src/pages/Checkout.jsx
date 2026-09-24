@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Trash2, ShieldCheck, CreditCard, Lock, ShoppingBag, LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 
@@ -9,6 +9,7 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '' });
   const [loading, setLoading] = useState(false);
   const [googleUser, setGoogleUser] = useState(null);
+  const navigate = useNavigate();
 
   const handleGoogleSuccess = (credentialResponse) => {
     try {
@@ -65,10 +66,12 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
         window.snap.pay(data.snapToken, {
           onSuccess: function (result) {
             alert("Payment Success! We will contact you via WhatsApp.");
+            navigate('/cek-pesanan?order_id=' + orderData.order_id);
             // Clear cart logic here (would pass clearCart from App.jsx)
           },
           onPending: function (result) {
             alert("Waiting for your payment!");
+            navigate('/cek-pesanan?order_id=' + orderData.order_id);
           },
           onError: function (result) {
             alert("Payment failed!");
