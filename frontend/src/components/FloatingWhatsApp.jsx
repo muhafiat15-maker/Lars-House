@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const FloatingWhatsApp = () => {
-  const phoneNumber = "6281234567890"; // Placeholder number, can be updated later
+  const phoneNumber = "6281344824482"; // Updated WhatsApp number
   const message = "Halo, saya ingin bertanya tentang produk Lars House";
   
   const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

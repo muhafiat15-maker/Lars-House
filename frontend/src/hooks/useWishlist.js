@@ -1,22 +1,21 @@
 import { useState, useEffect } from 'react';
 
 export function useWishlist() {
-  const [wishlist, setWishlist] = useState(() => {
+  const [wishlist, setWishlistState] = useState(() => {
     const saved = localStorage.getItem('lars_wishlist');
     return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem('lars_wishlist', JSON.stringify(wishlist));
-    // Dispatch a custom event so other components can sync
-    window.dispatchEvent(new Event('wishlist-updated'));
-  }, [wishlist]);
-
-  useEffect(() => {
     const handleSync = () => {
       const saved = localStorage.getItem('lars_wishlist');
       if (saved) {
-        setWishlist(JSON.parse(saved));
+        setWishlistState(prev => {
+          if (JSON.stringify(prev) !== saved) {
+            return JSON.parse(saved);
+          }
+          return prev;
+        });
       }
     };
     window.addEventListener('wishlist-updated', handleSync);
@@ -24,11 +23,15 @@ export function useWishlist() {
   }, []);
 
   const toggleWishlist = (productId) => {
-    setWishlist(prev => 
-      prev.includes(productId) 
+    setWishlistState(prev => {
+      const next = prev.includes(productId) 
         ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
+        : [...prev, productId];
+      
+      localStorage.setItem('lars_wishlist', JSON.stringify(next));
+      window.dispatchEvent(new Event('wishlist-updated'));
+      return next;
+    });
   };
 
   const isInWishlist = (productId) => wishlist.includes(productId);
