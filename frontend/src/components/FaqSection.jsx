@@ -49,10 +49,10 @@ export default function FaqSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="border border-gray-200 rounded-2xl overflow-hidden bg-lars-sand/10"
+              className="border border-gray-100 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow relative z-20"
             >
               <button
-                className="w-full text-left px-8 py-6 flex justify-between items-center hover:bg-lars-sand/30 transition-colors"
+                className="w-full text-left px-8 py-6 flex justify-between items-center hover:bg-gray-50 transition-colors"
                 onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
               >
                 <span className="font-serif text-xl text-lars-navy">{faq.question}</span>
