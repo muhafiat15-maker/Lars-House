@@ -11,6 +11,17 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
   const [googleUser, setGoogleUser] = useState(null);
   const navigate = useNavigate();
 
+  // Shipping
+  const [shippingCity, setShippingCity] = useState('');
+  const [shippingCost, setShippingCost] = useState(0);
+
+  // Voucher
+  const [voucherCode, setVoucherCode] = useState('');
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [voucherError, setVoucherError] = useState('');
+  const [voucherApplied, setVoucherApplied] = useState(false);
+  const [validatingVoucher, setValidatingVoucher] = useState(false);
+
   const handleGoogleSuccess = (credentialResponse) => {
     try {
       const decoded = jwtDecode(credentialResponse.credential);
@@ -21,11 +32,54 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
         email: prev.email || decoded.email
       }));
     } catch (error) {
+    } catch (error) {
       console.error("Error decoding Google JWT", error);
     }
   };
 
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const handleCityChange = (e) => {
+    const city = e.target.value;
+    setShippingCity(city);
+    if (city === 'Makassar') {
+      setShippingCost(10000);
+    } else if (city === 'Luar Makassar Sulawesi') {
+      setShippingCost(20000);
+    } else if (city === 'Luar Sulawesi') {
+      setShippingCost(35000);
+    } else {
+      setShippingCost(0);
+    }
+  };
+
+  const validateVoucher = async () => {
+    if (!voucherCode) return;
+    setValidatingVoucher(true);
+    setVoucherError('');
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/validate-voucher`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: voucherCode })
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setDiscountPercent(data.discountPercent);
+        setVoucherApplied(true);
+      } else {
+        setVoucherError(data.error || 'Voucher tidak valid');
+        setDiscountPercent(0);
+        setVoucherApplied(false);
+      }
+    } catch (error) {
+      setVoucherError('Gagal memvalidasi voucher');
+    } finally {
+      setValidatingVoucher(false);
+    }
+  };
+
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const discountAmount = (subtotal * discountPercent) / 100;
+  const total = subtotal - discountAmount + shippingCost;
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -168,16 +222,65 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
             <div className="bg-lars-sand/50 rounded-2xl p-6 mb-8 border border-lars-gold/20">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium text-lars-navy">Rp {total.toLocaleString('id-ID')}</span>
+                <span className="font-medium text-lars-navy">Rp {subtotal.toLocaleString('id-ID')}</span>
               </div>
+              
+              {discountPercent > 0 && (
+                <div className="flex justify-between items-center mb-2 text-green-600">
+                  <span>Diskon ({discountPercent}%)</span>
+                  <span className="font-medium">-Rp {discountAmount.toLocaleString('id-ID')}</span>
+                </div>
+              )}
+
               <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-200">
                 <span className="text-gray-600">Pengiriman</span>
-                <span className="font-medium text-lars-teal">Dihitung nanti</span>
+                <span className="font-medium text-lars-teal">
+                  {shippingCost > 0 ? `Rp ${shippingCost.toLocaleString('id-ID')}` : 'Dihitung nanti'}
+                </span>
               </div>
               <div className="flex justify-between items-center text-xl font-bold text-lars-navy">
                 <span>Total Tagihan</span>
                 <span className="text-lars-gold">Rp {total.toLocaleString('id-ID')}</span>
               </div>
+            </div>
+
+            {/* Voucher Section */}
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Kode Voucher</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={voucherCode} 
+                  onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
+                  disabled={voucherApplied}
+                  className="flex-1 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-lars-gold/50 focus:border-lars-gold outline-none transition-all shadow-sm disabled:opacity-50"
+                  placeholder="Masukkan kode..." 
+                />
+                {!voucherApplied ? (
+                  <button 
+                    type="button" 
+                    onClick={validateVoucher}
+                    disabled={validatingVoucher || !voucherCode}
+                    className="bg-lars-teal text-white px-6 py-3 rounded-xl hover:bg-lars-navy transition-colors disabled:opacity-50"
+                  >
+                    {validatingVoucher ? 'Cek...' : 'Terapkan'}
+                  </button>
+                ) : (
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setVoucherApplied(false);
+                      setVoucherCode('');
+                      setDiscountPercent(0);
+                    }}
+                    className="bg-red-500 text-white px-6 py-3 rounded-xl hover:bg-red-600 transition-colors"
+                  >
+                    Batal
+                  </button>
+                )}
+              </div>
+              {voucherError && <p className="text-red-500 text-sm mt-2">{voucherError}</p>}
+              {voucherApplied && <p className="text-green-600 text-sm mt-2">Voucher berhasil diterapkan!</p>}
             </div>
 
             <form onSubmit={handleCheckout} className="space-y-5">
@@ -234,6 +337,20 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Alamat Lengkap</label>
                 <textarea name="address" required value={formData.address} onChange={handleChange} rows="3" className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-lars-gold/50 focus:border-lars-gold outline-none transition-all shadow-sm resize-none" placeholder="Jalan, RT/RW, Kecamatan, Kota..."></textarea>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Pilih Wilayah Pengiriman</label>
+                <select 
+                  required 
+                  value={shippingCity} 
+                  onChange={handleCityChange}
+                  className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-lars-gold/50 focus:border-lars-gold outline-none transition-all shadow-sm"
+                >
+                  <option value="" disabled>Pilih wilayah pengiriman...</option>
+                  <option value="Makassar">Makassar (Rp 10.000)</option>
+                  <option value="Luar Makassar Sulawesi">Luar Makassar, Sulawesi (Rp 20.000)</option>
+                  <option value="Luar Sulawesi">Luar Sulawesi (Rp 35.000)</option>
+                </select>
               </div>
 
               <button

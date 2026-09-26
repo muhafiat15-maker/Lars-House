@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Menu, X } from 'lucide-react';
+import { ShoppingBag, Menu, X, Heart } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useWishlist } from '../hooks/useWishlist';
 
 export default function Navbar({ cartCount }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -9,6 +10,7 @@ export default function Navbar({ cartCount }) {
   const [activeSection, setActiveSection] = useState('home');
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { wishlist } = useWishlist();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -81,6 +83,22 @@ export default function Navbar({ cartCount }) {
         </div>
 
         <div className="flex items-center space-x-6">
+          <Link to="/favorit" className="relative group flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/10 transition-colors">
+            <Heart className={`transition-colors text-white group-hover:text-red-400 ${wishlist.length > 0 ? 'text-red-400 fill-current' : ''}`} size={20} />
+            <AnimatePresence>
+              {wishlist.length > 0 && (
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md"
+                >
+                  {wishlist.length}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </Link>
+          
           <Link to="/checkout" className="relative group flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/10 transition-colors">
             <ShoppingBag className="transition-colors text-white group-hover:text-lars-gold" size={20} />
             <AnimatePresence>
@@ -120,6 +138,12 @@ export default function Navbar({ cartCount }) {
                 </>
               )}
               <Link to="/cek-pesanan" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium ${location.pathname === '/cek-pesanan' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>Cek Pesanan</Link>
+              <Link to="/favorit" onClick={() => setIsMobileMenuOpen(false)} className={`text-lg font-medium flex items-center space-x-2 ${location.pathname === '/favorit' ? 'text-lars-gold' : 'hover:text-lars-gold'}`}>
+                <span>Favorit Saya</span>
+                {wishlist.length > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{wishlist.length}</span>
+                )}
+              </Link>
             </div>
           </motion.div>
         )}

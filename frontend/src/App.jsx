@@ -5,6 +5,9 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Checkout from './pages/Checkout';
 import OrderStatus from './pages/OrderStatus';
+import Favorites from './pages/Favorites';
+import FloatingWhatsApp from './components/FloatingWhatsApp';
+import SocialProof from './components/SocialProof';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { ChevronUp } from 'lucide-react';
 
@@ -80,7 +83,8 @@ function App() {
                 updateQuantity={updateQuantity} 
               />
             } />
-            <Route path="/cek-pesanan" element={<OrderStatus />} />
+            <Route path="/cek-pesanan" element={<OrderStatus addToCart={addToCart} />} />
+            <Route path="/favorit" element={<Favorites addToCart={addToCart} />} />
           </Routes>
         </main>
         <Footer />
@@ -93,12 +97,15 @@ function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               onClick={scrollToTop}
-              className="fixed bottom-8 right-8 p-3 bg-lars-navy text-lars-gold rounded-full shadow-xl hover:bg-lars-teal transition-colors z-50 border border-lars-gold/20"
+              className="fixed bottom-24 right-8 p-3 bg-lars-navy text-lars-gold rounded-full shadow-xl hover:bg-lars-teal transition-colors z-50 border border-lars-gold/20"
             >
               <ChevronUp size={24} />
             </motion.button>
           )}
         </AnimatePresence>
+
+        <FloatingWhatsApp />
+        <SocialProof />
       </div>
     </Router>
   );

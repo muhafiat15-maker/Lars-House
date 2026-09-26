@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import HeroSection from '../components/HeroSection';
 import ProductCard from '../components/ProductCard';
 import FaqSection from '../components/FaqSection';
@@ -69,6 +69,27 @@ const FAQItem = ({ question, answer }) => {
 };
 
 export default function Home({ addToCart }) {
+  const [selectedCategory, setSelectedCategory] = useState('Semua');
+  const [sortOption, setSortOption] = useState('default');
+
+  const categories = useMemo(() => ['Semua', ...new Set(products.map(p => p.category))], []);
+
+  const displayedProducts = useMemo(() => {
+    let result = [...products];
+    if (selectedCategory !== 'Semua') {
+      result = result.filter(p => p.category === selectedCategory);
+    }
+    
+    if (sortOption === 'price-asc') {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortOption === 'price-desc') {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortOption === 'name-asc') {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return result;
+  }, [selectedCategory, sortOption]);
+
   return (
     <div className="min-h-screen">
       <HeroSection />
@@ -184,8 +205,36 @@ export default function Home({ addToCart }) {
             <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light">Pilihan sayuran laut premium kami yang diolah dengan standar keunggulan untuk memenuhi selera kuliner Anda.</p>
           </div>
           
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-lars-navy font-medium">Kategori:</span>
+              <select 
+                value={selectedCategory} 
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="border border-lars-gold/30 rounded-lg px-4 py-2 text-lars-navy focus:outline-none focus:border-lars-gold bg-white shadow-sm"
+              >
+                {categories.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-lars-navy font-medium">Urutkan:</span>
+              <select 
+                value={sortOption} 
+                onChange={(e) => setSortOption(e.target.value)}
+                className="border border-lars-gold/30 rounded-lg px-4 py-2 text-lars-navy focus:outline-none focus:border-lars-gold bg-white shadow-sm"
+              >
+                <option value="default">Rekomendasi</option>
+                <option value="price-asc">Harga Terendah</option>
+                <option value="price-desc">Harga Tertinggi</option>
+                <option value="name-asc">Nama A-Z</option>
+              </select>
+            </div>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product) => (
+            {displayedProducts.map((product) => (
               <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
             ))}
           </div>

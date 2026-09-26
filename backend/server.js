@@ -149,6 +149,23 @@ app.get('/api/order-status/:orderId', async (req, res) => {
   }
 });
 
+// Endpoint to validate voucher
+const validVouchers = {
+  "LARS10": 10,
+  "WELCOME15": 15
+};
+
+app.post('/api/validate-voucher', (req, res) => {
+  const { code } = req.body;
+  const upperCode = code ? code.toUpperCase() : '';
+  
+  if (validVouchers[upperCode]) {
+    res.json({ valid: true, discountPercent: validVouchers[upperCode] });
+  } else {
+    res.status(404).json({ valid: false, error: 'Kode voucher tidak valid' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
 });

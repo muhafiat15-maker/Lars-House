@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Package, ArrowLeft, CheckCircle, Clock, XCircle, AlertCircle } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { products } from '../data/products';
+import ProductCard from '../components/ProductCard';
 
-export default function OrderStatus() {
+export default function OrderStatus({ addToCart }) {
   const [searchParams] = useSearchParams();
   const [orderId, setOrderId] = useState(searchParams.get('order_id') || '');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+
+  // Random related products
+  const relatedProducts = useMemo(() => {
+    const shuffled = [...products].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 3);
+  }, []);
 
   useEffect(() => {
     if (orderId && searchParams.get('order_id')) {
@@ -154,6 +162,19 @@ export default function OrderStatus() {
           )}
 
         </motion.div>
+
+        {/* Related Products Section */}
+        <div className="mt-24 mb-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-serif text-lars-navy mb-4">Mungkin Anda Suka</h2>
+            <div className="w-16 h-1 bg-lars-gold mx-auto mb-6"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {relatedProducts.map(product => (
+              <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
