@@ -32,7 +32,6 @@ export default function Checkout({ cart, removeFromCart, updateQuantity }) {
         email: prev.email || decoded.email
       }));
     } catch (error) {
-    } catch (error) {
       console.error("Error decoding Google JWT", error);
     }
   };
